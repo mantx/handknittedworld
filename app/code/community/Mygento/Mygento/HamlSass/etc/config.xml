@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<config>
+  <modules>
+    <Mygento_HamlSass>
+      <version> 0.0.1</version>
+    </Mygento_HamlSass>
+  </modules>
+  
+  <frontend>
+    <layout>
+      <updates>
+        <haml>
+          <file>testhaml.xml</file>
+        </haml>
+      </updates>
+    </layout>
+  </frontend>
+  
+  <global>
+    <models>
+      <haml>
+        <class>Mygento_HamlSass_Model</class>
+      </haml>
+      
+      <core>
+        <rewrite>
+          <design_package>Mygento_HamlSass_Model_Design_Package</design_package>
+        </rewrite>
+      </core>
+    </models>
+  </global>
+    
+</config>
