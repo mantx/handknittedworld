@@ -1,0 +1,55 @@
+-#
+
+
+- $_productCollection=$this->getLoadedProductCollection() 
+
+.category-products
+  - $_iterator = 0
+  %ol(class="products-list" id="products-list")
+    - foreach ($_productCollection as $_product)
+      %li.item(class="#{(++$_iterator == sizeof($_productCollection)) ? last : '' }")
+        / Product Image 
+        %a.product-image(href="#{ $_product->getProductUrl() }" title="#{ $this->htmlEscape($this->getImageLabel($_product, 'small_image')) }")
+          %img(src="#{ $this->helper('catalog/image')->init($_product, 'small_image')->resize(170) }" width="170" height="170" alt="#{ $this->htmlEscape($this->getImageLabel($_product, 'small_image')) }")
+        / Product description 
+        .product-shop
+          .f-fix
+            %h2.product-name
+              %a(href="#{ $_product->getProductUrl() }" title="#{ $this->htmlEscape($_product->getName()) }")
+                = $this->htmlEscape($_product->getName())
+            - if($_product->getRatingSummary())
+              - $this->getReviewsSummaryHtml($_product) 
+
+            - echo $this->getPriceHtml($_product, true) 
+
+            - if($_product->isSaleable())
+              %p
+                %button.button.btn-cart(type="button" title="#{ $this->__('Add to Cart')} " onclick="setLocation('#{ $this->getAddToCartUrl($_product) }')")
+                  %span
+                    %span= $this->__('Add to Cart') 
+            - else
+              %p.availability.out-of-stock
+                %span= $this->__('Out of stock')
+
+            .desc.std
+              - echo nl2br($_product->getShortDescription())
+              %a.link-more(href="#{$_product->getProductUrl() }" title="#{ $this->htmlEscape($_product->getName()) }")
+                = $this->__('Learn More') 
+
+            %ul.add-to-links
+              - if ($this->helper('wishlist')->isAllow()) 
+                %li
+                  %a.link-wishlist(href="#{ $this->helper('wishlist')->getAddUrl($_product) }" )
+                    = $this->__('Add to Wishlist')
+
+              - if($_compareUrl=$this->getAddToCompareUrl($_product))
+                %li
+                  %spa.separator | 
+                  %a.link-compare(href="#{ $_compareUrl }")
+                    = $this->__('Add to Compare') 
+
+
+  %script(type="text/javascript")
+    != decorateList('products-list', 'none-recursive')
+
+

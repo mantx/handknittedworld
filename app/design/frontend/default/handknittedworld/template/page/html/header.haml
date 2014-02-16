@@ -1,0 +1,27 @@
+-#
+
+
+.header-container
+  .header
+    - if ($this->getIsHomePage())
+      %h1.logo
+        %strong= $this->getLogoAlt()
+        %a.logo(href="#{$this->getUrl('')}" title="#{$this->getLogoAlt()}")
+          %img(src="#{$this->getLogoSrc()}" alt="#{$this->getLogoAlt()}")
+    - else
+      %a.logo(href="#{$this->getUrl('')}" title="#{$this->getLogoAlt()}")
+        %strong= $this->getLogoAlt()
+        %img(src="#{$this->getLogoSrc()}" alt="#{$this->getLogoAlt()}")
+
+    .search
+      - echo $this->getChildHtml('topSearch')
+
+    .access
+      - echo $this->getChildHtml('topLinks')
+
+  #navigation
+    - echo $this->getChildHtml('topMenu')
+    .clearfix
+  
+  - echo $this->getChildHtml('mobile-nav')
+  - echo $this->getChildHtml('topBar')

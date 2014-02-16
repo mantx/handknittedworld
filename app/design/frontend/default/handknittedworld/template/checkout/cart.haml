@@ -1,0 +1,120 @@
+-#
+  * Magento
+  *
+  * NOTICE OF LICENSE
+  *
+  * This source file is subject to the Academic Free License (AFL 3.0)
+  * that is bundled with this package in the file LICENSE_AFL.txt.
+  * It is also available through the world-wide-web at this URL:
+  * http://opensource.org/licenses/afl-3.0.php
+  * If you did not receive a copy of the license and are unable to
+  * obtain it through the world-wide-web, please send an email
+  * to license@magentocommerce.com so we can send you a copy immediately.
+  *
+  * DISCLAIMER
+  *
+  * Do not edit or add to this file if you wish to upgrade Magento to newer
+  * versions in the future. If you wish to customize Magento for your
+  * needs please refer to http://www.magentocommerce.com for more information.
+  *
+  * @category    design
+  * @package     base_default
+  * @copyright   Copyright (c) 2010 Magento Inc. (http://www.magentocommerce.com)
+  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+  *
+  *
+  * Shopping cart template
+  *
+  * @see Mage_Checkout_Block_Cart
+  *
+
+.cart
+  .page-title.title-buttons
+    %h1= $this->__('Shopping Cart')
+    - if(!$this->hasError())
+      %ul.checkout-types
+        - foreach ($this->getMethods('top_methods') as $method)
+          - if ($methodHtml = $this->getMethodHtml($method))
+            %li= $methodHtml;
+    - echo $this->getMessagesBlock()->getGroupedHtml()
+    - echo $this->getChildHtml('form_before')
+
+  %form{:action=> "#{$this->getUrl('checkout/cart/updatePost')}", :method="post"}
+    %fieldset
+      %table.data-table.cart-table#shopping-cart-table
+        %col(width="1")
+        %col
+        %col(width="1")
+        - if ($this->helper('wishlist')->isAllowInCart())
+          %col(width="1")
+        - if ($this->helper('tax')->displayCartPriceExclTax() || $this->helper('tax')->displayCartBothPrices())
+          %col(width="1")
+        - if ($this->helper('tax')->displayCartPriceInclTax() || $this->helper('tax')->displayCartBothPrices())
+          %col(width="1")
+        %col(width="1")
+        - if ($this->helper('tax')->displayCartPriceExclTax() || $this->helper('tax')->displayCartBothPrices())
+          %col(width="1")
+        - if ($this->helper('tax')->displayCartPriceInclTax() || $this->helper('tax')->displayCartBothPrices())
+          %col(width="1")
+        %col(width="1")
+
+        - $mergedCells = ($this->helper('tax')->displayCartBothPrices() ? 2 : 1)
+        %thead
+          %tr
+            %th{:rowspan=> "#{$mergedCells}"}= "&nbsp;"
+            %th{:rowspan=> "#{$mergedCells}"}
+              %span.nobr= $this->__('Product Name')
+            %th{:rowspan=> "#{$mergedCells}"}
+            - if ($this->helper('wishlist')->isAllowInCart())
+              %th.a-center{:rowspan=> "#{$mergedCells}"}
+                %span.nobr= $this->__('Move to Wishlist')
+
+            %th.a-center{:colspan=> "#{$mergedCells}"}
+              %span.nobr= $this->__('Unit Price')
+            %th.a-center{:rowspan=> "#{$mergedCells}"}
+              = $this->__('Qty')
+            %th.a-center{:colspan=> "#{$mergedCells}"}
+              = $this->__('Subtotal')
+            %th.a-center{:rowspan=> "#{$mergedCells}"}= "&nbsp;"
+
+          - if ($this->helper('tax')->displayCartBothPrices())
+            %tr
+              %th.a-right= $this->helper('tax')->getIncExcTaxLabel(false)
+              %th= $this->helper('tax')->getIncExcTaxLabel(true)
+              %th.a-right= $this->helper('tax')->getIncExcTaxLabel(false)
+              %th= $this->helper('tax')->getIncExcTaxLabel(true)
+        %tfoot
+          %tr
+            %td.a-right(colspan="50")
+              - if($this->getContinueShoppingUrl())
+                %button.button.btn-continue{:type=>"button", :title=>$this->__('Continue Shopping'), :onclick=>"setLocation('#{$this->getContinueShoppingUrl()}')"}
+                  %span
+                    %span= $this->__('Continue Shopping')
+
+              %button.button.btn-update(type="submit" title="#{$this->__('Update Shopping Cart')}")
+                %span
+                  %span= $this->__('Update Shopping Cart')
+        %tbody
+          - foreach($this->getItems() as $_item)
+            - echo $this->getItemHtml($_item)
+
+      :javascript
+        decorateTable('shopping-cart-table')
+  -# </form>
+
+  .cart-collaterals
+    .col2-set
+      .col-1
+        - echo $this->getChildHtml('crosssell')
+      .col-2
+        - echo $this->getChildHtml('coupon')
+        - if (!$this->getIsVirtual())
+          - echo $this->getChildHtml('shipping')
+        .totals
+          - echo $this->getChildHtml('totals')
+            - if(!$this->hasError())
+              %ul.checkout-types
+                - foreach ($this->getMethods('methods') as $method)
+                  - if ($methodHtml = $this->getMethodHtml($method))
+                    %li= $methodHtml
+

@@ -1,0 +1,95 @@
+-#
+  * Magento
+  *
+  * NOTICE OF LICENSE
+  *
+  * This source file is subject to the Academic Free License (AFL 3.0)
+  * that is bundled with this package in the file LICENSE_AFL.txt.
+  * It is also available through the world-wide-web at this URL:
+  * http://opensource.org/licenses/afl-3.0.php
+  * If you did not receive a copy of the license and are unable to
+  * obtain it through the world-wide-web, please send an email
+  * to license@magentocommerce.com so we can send you a copy immediately.
+  *
+  * DISCLAIMER
+  *
+  * Do not edit or add to this file if you wish to upgrade Magento to newer
+  * versions in the future. If you wish to customize Magento for your
+  * needs please refer to http://www.magentocommerce.com for more information.
+  *
+  * @category    design
+  * @package     base_default
+  * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+  *
+  *
+  * Shoping cart sidebar
+  *
+  * @see Mage_Checkout_Block_Cart_Sidebar
+  *
+
+- $_cartQty = $this->getSummaryCount()
+%li.top-cart-inner
+  .top-link-cart#top-link-cart
+    %a(href="#{$this->getUrl('checkout/cart')}")
+      %span= $this->__('My Cart')
+    %span
+      %label.qty-top-cart
+        = ($_cartQty == 0) ? '0' : $_cartQty
+
+  .top-cart-content#top-cart(style="display: none;") 
+    - if ($this->getIsNeedToDisplaySideBar())
+      .block.block-cart-top
+        .block-title
+          %strong
+            %span= $this->__('My Cart')
+
+        .block-content
+          - $_items = $this->getRecentItems()
+          - if (count($_items))
+            %ol.mini-products-list#cart-sidebar
+              - foreach ($_items as $_item)
+                - echo $this->getItemHtml($_item)
+            :javascript
+              decorateList('cart-sidebar', 'none-recursive')
+          - else
+            %p.empty= $this->__('You have no items in your shopping cart.')
+
+          - if ($_cartQty > 0)
+            .summary
+              %p.subtotal
+                - if ($this->canApplyMsrp())
+                  %span.map-cart-sidebar-total= $this->__('ORDER TOTAL WILL BE DISPLAYED BEFORE YOU SUBMIT THE ORDER')
+                - else
+                  %span.label= $this->__('Cart Subtotal:')
+                  
+                  - if (Mage::app()->getRequest()->getControllerName() == 'multishipping_address')
+                    - $quote = Mage::getSingleton('checkout/cart')->getQuote()
+                    - $quote->collectTotals()
+                    - $quote->getShippingAddress()->collectTotals()
+                  
+                  - echo Mage::helper('checkout')->formatPrice($this->getSubtotal())
+                  - if ($_subtotalInclTax = $this->getSubtotalInclTax())
+                    %br
+                    - echo Mage::helper('checkout')->formatPrice($_subtotalInclTax)
+                    - echo Mage::helper('tax')->getIncExcText(true)
+
+          - if ($_cartQty && $this->isPossibleOnepageCheckout())
+            .actions
+              - echo $this->getChildHtml('extra_actions')
+              %button.button(type="button" title="#{$this->__('Checkout')}" onclick="setLocation('#{$this->getCheckoutUrl()}')")
+                %span
+                  %span= $this->__('Checkout')
+            
+            :javascript
+              jQuery(document).ready(function() {
+                function insertHtml(){
+                  var $=jQuery;
+                  if($('body').hasClass('adapt-0') == true ){
+                    $("<p class='go-cart'><a href='<?php echo $this->getUrl('checkout/cart') ?>'><span>Go to shopping cart</span></a></p>").insertAfter('#top-cart div.actions button');
+                  }
+                }
+                insertHtml();
+              });
+
+

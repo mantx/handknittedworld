@@ -1,0 +1,46 @@
+- $_menu = $this->renderCategoriesMenuHtml(0, 'level-top')
+- if ($_menu)
+  :javascript
+    jQuery(document).ready(function() {
+      jQuery('.toggle').click(function() {
+        if (jQuery('.submenu').is(":hidden"))
+        {
+          jQuery('.submenu').slideDown("fast");
+        } else {
+          jQuery('.submenu').slideUp("fast");
+        }
+        return false;
+      });
+    });
+
+  .hidden-desktop#menu
+    %ul.submenu#left-nav(style="display:none;")
+      - foreach ($this->getStoreCategories() as $_category)
+        - if ($_category->getIsActive())
+          - $isactive = $this->isCategoryActive($_category)
+          - $hasChildren = $_category->hasChildren()
+          %li.category(class="#{$isactive ? 'active' : NULL}")
+            %a(href="#{!$hasChildren ? $this->getCategoryUrl($_category) : $this->getCategoryUrl($_category)}")
+              = $_category->getName()
+            - if ($hasChildren)
+              %span.arrow(lang="#{$_category->getId()}")
+
+          - if ($hasChildren)
+            %li
+              %ul.subcategory(class="subcategory_#{$_category->getId()}" style="display:#{$isactive ? 'block' : 'none';}")
+                - foreach (Mage::getModel('catalog/category')->load($_category->getId())->getChildrenCategories() as $childCategory)
+                  - $isactive = $this->isCategoryActive($childCategory)
+                  - $hasmoreChildren = $childCategory->hasChildren()
+                  %li.category.cate(class="#{($isactive) ? 'active' : NULL}" lang="#{$childCategory->getId()}")
+                    %a(href="#{!$hasmoreChildren ? $childCategory->getUrl() : $childCategory->getUrl()}")
+                      = $childCategory->getName()
+                    - if ($hasmoreChildren) 
+                      - echo ' <span class="arrow" lang="' . $childCategory->getId() . '"><i></i></span>'
+                  - if ($hasmoreChildren)
+                    %li								
+                      %ul.subcategory(class="subcategory_#{$childCategory->getId()}" style="display:#{ $isactive ? 'block' : 'none'}")
+                        - foreach (Mage::getModel('catalog/category')->load($childCategory->getId())->getChildrenCategories() as $_childCategory)
+                          - $isactive = $this->isCategoryActive($_childCategory)
+                          %li.category.cat(class="<?php if ($isactive) echo 'active'; ?>")
+                            %a(href="#{ $_childCategory->getUrl() }")
+                              = $_childCategory->getName()

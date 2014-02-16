@@ -1,0 +1,21 @@
+-#
+
+
+.footer-container
+  .footer
+    - echo $this->getChildHtml('bottomContainer')
+
+    .footer-links
+      - echo $this->getLayout()->createBlock('cms/block')->setBlockId('footerLinks')->toHtml()
+      .payment
+        %img(src="#{$this->getSkinUrl('images/creditcards.gif')}" alt="We Accept all Major Credit Cards")
+
+      -# echo $this->getChildHtml('cms_footer_links')
+      -# echo $this->getChildHtml('footer_links')
+      -# echo $this->getChildHtml('newsletter')
+
+.copyright
+  .f-left
+    %address= $this->getCopyright()
+
+  .(style="clear:both;")  

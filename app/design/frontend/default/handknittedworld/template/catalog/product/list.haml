@@ -1,0 +1,15 @@
+
+- $_productCollection=$this->getLoadedProductCollection()
+- if(!$_productCollection->count())
+  %p.note-msg= $this->__('There are no products matching the selection.')
+- else
+  .category-products
+    - echo $this->getToolbarHtml()
+
+    -# List mode 
+    - if($this->getMode()=='list')
+      - echo $this->renderChildView("catalog/product/list_list.phtml")
+    - else
+      - echo $this->renderChildView("catalog/product/list_grid.phtml")
+
+    - echo $this->getToolbarHtml()
